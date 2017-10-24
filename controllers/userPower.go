@@ -7,14 +7,72 @@ import (
 	"github.com/astaxie/beego/orm"
 	"crypto/md5"
 	"github.com/astaxie/beego/logs"
+	"encoding/json"
 )
 
 type UserPowerController struct {
 	beego.Controller
 }
 
+// 新建一个权限
 func (userPower *UserPowerController) Add() {
 	result := make(map[string]interface{})
+	result["num"] = 0
+	result["err"] = ""
+	result["result"] = ""
+
+	var _l_userpower models.UserPower
+	err := json.Unmarshal(userPower.Ctx.Input.RequestBody, &_l_userpower)
+	if err != nil {
+		result["err"] = -1
+		result["result"] = err
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}
+
+	if id, err := models.AddUserPower(_l_userpower); err != nil {
+		result["err"] = -2
+		result["result"] = id
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}else {
+		result["result"] = id
+	}
+
+	userPower.Data["json"] = result
+	userPower.ServeJSON()
+}
+
+// 获得权限信息
+func (userPower *UserPowerController) GetPower() {
+	result := make(map[string]interface{})
+	result["err"] = 0
+	result["num"] = 0
+
+	var l_user_id int64
+	if user_id, err := userPower.GetInt64("user_id"); err != nil {
+		result["err"] = -1
+		result["result"] = user_id
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	} else {
+		l_user_id = user_id
+		result["result"] = user_id
+	}
+
+	if r_userpower, err := models.GetPower(l_user_id); err != nil {
+		result["err"] = -2
+	} else {
+		result["result"] = r_userpower
+	}
+	userPower.Data["json"] = result
+	userPower.ServeJSON()
+}
+
+// 推送权限信息
+func (userPower *UserPowerController) PutPower() {
+	result := make(map[string]interface{})
+
 	userPower.Data["json"] = result
 	userPower.ServeJSON()
 }
@@ -62,7 +120,6 @@ func (userPower *UserPowerController) Login() {
 		userPower.ServeJSON()
 	}
 	//------------------------------------------------------------------------------//
-
 
 	//------------------------------------------------------------------------------//
 	// 反馈密码正确 ！  并且 反馈一个密码 交给客户端去判断

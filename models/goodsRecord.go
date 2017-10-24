@@ -11,7 +11,6 @@ import (
 
 type GoodsRecord struct {
 	GoodsRecordID 	int64 				`orm:"column(id);pk;auto" json:"goods_record_id"`
-
 	Name 			string 				`orm:"size(50);column(name)" json:"name"`
 	CreateDate 		time.Time          	`orm:"auto_now_add;type(datetime);null" json:"create_date"`         //创建时间
 	Op				string  			`orm:"size(50)" json:"op"`

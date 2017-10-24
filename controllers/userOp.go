@@ -6,6 +6,8 @@ import (
 	"nepliteApi/models"
 )
 
+//   管理用户操作记录
+
 type UserOpController struct {
 	beego.Controller
 }
