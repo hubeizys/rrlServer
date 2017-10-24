@@ -6,6 +6,10 @@ import (
 
 )
 
+
+// 用户盘点
+
+
 type GoodsPD struct {
 	GoodsPDID 			int64 			`orm:"pk;auto" json:"goods_pdid"`
 	GoodsPDName 		string			`orm:"size(64)" json:"goods_pd_name"`

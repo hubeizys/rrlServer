@@ -13,7 +13,6 @@ import (
 	"github.com/astaxie/beego/context"
 )
 
-
 func init() {
 	user_ns := beego.NewNamespace("/user",
 		beego.NSNamespace("/object",
@@ -21,6 +20,7 @@ func init() {
 				&controllers.ObjectController{},
 			),
 		),
+		beego.NSRouter("/map", &controllers.UserController{}, "get:URLMapping"),
 		beego.NSRouter("/update", &controllers.UserController{}, "get:UpdateUserYuee"),
 		beego.NSRouter("/updateBase", &controllers.UserController{}, "get:UpdateUserBase"),
 		beego.NSRouter("/add", &controllers.UserController{}, "get:Add"),
@@ -39,10 +39,15 @@ func init() {
 		),
 
 		beego.NSNamespace("/sales",
-			beego.NSRouter("/getalltouser",&controllers.SalesController{}, "get:Getall2User"),
-			beego.NSRouter("/yingli",&controllers.SalesController{}, "get:Yingli"),
-			beego.NSRouter("/getall",&controllers.SalesController{}, "get:Getall"),
-			beego.NSRouter("/add",&controllers.SalesController{}, "get:Add"),
+			beego.NSRouter("/getalltouser", &controllers.SalesController{}, "get:Getall2User"),
+			beego.NSRouter("/yingli", &controllers.SalesController{}, "get:Yingli"),
+			beego.NSRouter("/getall", &controllers.SalesController{}, "get:Getall"),
+			beego.NSRouter("/add", &controllers.SalesController{}, "get:Add"),
+		),
+
+		beego.NSNamespace("/power",
+			beego.NSRouter("/add", &controllers.UserPowerController{}, "get:Add"),
+			beego.NSRouter("/login", &controllers.UserPowerController{}, "get:Login"),
 		),
 	)
 

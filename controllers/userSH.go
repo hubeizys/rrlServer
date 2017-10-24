@@ -3,11 +3,9 @@ package controllers
 
 import (
 	"nepliteApi/models"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
-
 
 
 type UserSHController struct {

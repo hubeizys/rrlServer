@@ -39,12 +39,13 @@ func init() {
 type User struct {
 	Id       		int
 	CardNum 		string
-	Username 		string `orm:"size(64)" json:"username"`
+	Username 		string 				`orm:"size(64)" json:"username"`
 	CreateDate 		time.Time          `orm:"auto_now_add;type(datetime);null" json:"create_date"`
 	Yueee	 		int
 	Guoqi   		time.Time		`orm:"auto_now_add;type(datetime);null" json:"guoqi"`
 	Status    		string
 	UserType  		string
+	UserLevel		int
 	Phone     		string
 	Password 		string
 	Gender   		string

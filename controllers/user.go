@@ -8,6 +8,7 @@ import (
 	"time"
 	"fmt"
 	"strconv"
+	"github.com/astaxie/beego/logs"
 )
 
 // Operations about Users
@@ -30,8 +31,8 @@ func (u *UserController) Post() {
 }
 
 func (c *UserController) URLMapping() {
+	logs.Info("nihaohahahah")
 	c.Mapping("Info", c.Info)
-
 }
 
 
@@ -163,7 +164,7 @@ func (u *UserController) Info() {
 	o := orm.NewOrm()
 	num, err:= o.QueryTable("user").All(&users)
 
-
+	logs.Warn("aasdasdasda")
 	result["num"] = num
 	result["result"] = users
 	result["err"] = err

@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// 销售记录
+
 
 type Sales struct {
 	SalesID   int64 `orm:"pk;auto"`
