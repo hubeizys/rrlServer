@@ -14,7 +14,7 @@ type UserPowerController struct {
 	beego.Controller
 }
 
-// 新建一个权限
+// 新建一个power
 func (userPower *UserPowerController) Add() {
 	result := make(map[string]interface{})
 	result["num"] = 0
@@ -35,9 +35,24 @@ func (userPower *UserPowerController) Add() {
 		result["result"] = id
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
-	}else {
+	} else {
 		result["result"] = id
 	}
+
+	userPower.Data["json"] = result
+	userPower.ServeJSON()
+}
+
+
+func (userPower *UserPowerController) GetAll(){
+	result := make(map[string]interface{})
+	result["err"] = 0
+	result["num"] = 0
+
+	power_list , num, err  := models.GetAllPower()
+	result["result"] = power_list
+	result["err"] = err
+	result["num"] = num
 
 	userPower.Data["json"] = result
 	userPower.ServeJSON()
@@ -52,7 +67,7 @@ func (userPower *UserPowerController) GetPower() {
 	var l_user_id int64
 	if user_id, err := userPower.GetInt64("user_id"); err != nil {
 		result["err"] = -1
-		result["result"] = user_id
+		result["result"] = err
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
 	} else {
@@ -62,6 +77,7 @@ func (userPower *UserPowerController) GetPower() {
 
 	if r_userpower, err := models.GetPower(l_user_id); err != nil {
 		result["err"] = -2
+		result["result"] = err
 	} else {
 		result["result"] = r_userpower
 	}
@@ -69,9 +85,69 @@ func (userPower *UserPowerController) GetPower() {
 	userPower.ServeJSON()
 }
 
-// 推送权限信息
+// 推送权限信息  // 测试用的已经放弃了
 func (userPower *UserPowerController) PutPower() {
 	result := make(map[string]interface{})
+	uid, err := userPower.GetInt64(":uid")
+
+	logs.Warn("uid : %d   err : %d", uid, err)
+	userPower.Data["json"] = result
+	userPower.ServeJSON()
+}
+
+func (userPower *UserPowerController) UpdatePower() {
+	result := make(map[string]interface{})
+	result["err"] = 0
+	result["num"] = 0
+	result["result"] = ""
+
+	var l_uid int64
+	var l_err error
+	if l_uid, l_err = userPower.GetInt64("uid"); l_err != nil {
+		result["err"] = -1
+		result["result"] = "没有找到用户信息"
+		logs.Info("uid === %s", l_uid)
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}
+
+	var l_userpower models.UserPower
+	if l_userpower, l_err = models.GetPower(l_uid); l_err != nil {
+		result["err"] = -2
+		result["result"] = "获取power信息失败"
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}
+	result["result"] = l_userpower
+	userPower.Data["json"] = result
+	userPower.ServeJSON()
+}
+
+func (userPower *UserPowerController) DeletePower() {
+	result := make(map[string]interface{})
+	result["err"] = 0
+	result["num"] = 0
+	result["result"] = ""
+
+	var _l_user_id int64
+	var _l_err  error
+	var _l_num  int64
+
+	if _l_user_id , _l_err = userPower.GetInt64("user_id"); _l_err != nil{
+		result["err"] = -1
+		result["result"] = "没有得到正确的参数"
+		logs.Info("user id 的结果是 %d", _l_user_id)
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}
+
+	if _l_num, _l_err = models.DelPowerById(_l_user_id); _l_err != nil{
+		logs.Info("被操作的条目 %d", _l_num)
+		result["err"] = -2
+		result["result"] = "条目不正确"
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}
 
 	userPower.Data["json"] = result
 	userPower.ServeJSON()
@@ -89,9 +165,9 @@ func (userPower *UserPowerController) Login() {
 	var user models.User
 
 	o.QueryTable("user").Filter("username", username).One(&user)
-	logs.Error("errr : %s", o.Read(&user))
+	logs.Error("err: %s", o.Read(&user))
 	if o.Read(&user) != nil {
-		result["result"] = "没有发现用户"
+		result["result"] = "用户名或者密码错误"
 		result["err"] = -1
 		userPower.Data["json"] = result
 		userPower.ServeJSON()

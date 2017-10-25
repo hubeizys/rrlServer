@@ -35,11 +35,10 @@ func (c *UserController) URLMapping() {
 	c.Mapping("Info", c.Info)
 }
 
-
 func (u *UserController) UpdateUserBase() {
-	result :=make(map[string]interface{})
+	result := make(map[string]interface{})
 	username := u.GetString("username")
-	cardnum:= u.GetString("cardnum")
+	cardnum := u.GetString("cardnum")
 	phonenum := u.GetString("phonenum")
 	JianKang := u.GetString("JianKang")
 	xingbie := u.GetString("xingbie")
@@ -51,10 +50,10 @@ func (u *UserController) UpdateUserBase() {
 	//user := User{Id: 1}
 	var user models.User
 	o.QueryTable("user").Filter("card_num", cardnum).One(&user)
-	result["err"] =  -1
-	result["result"] =  ""
-	result["num"] =  0
-	beego.Info("cardsadasdasdasdasdasdasd",cardnum, user, o.Read(&user))
+	result["err"] = -1
+	result["result"] = ""
+	result["num"] = 0
+	beego.Info("cardsadasdasdasdasdasdasd", cardnum, user, o.Read(&user))
 	if o.Read(&user) == nil {
 		user.Username = username
 		user.Phone = phonenum
@@ -74,27 +73,25 @@ func (u *UserController) UpdateUserBase() {
 			result["err"] = err
 		}
 	}
-	u.Data["json"]  = result
+	u.Data["json"] = result
 	u.ServeJSON()
 }
 
-
-
 func (u *UserController) UpdateUserYuee() {
-	result :=make(map[string]interface{})
+	result := make(map[string]interface{})
 	card_num := u.GetString("card_num")
-	yuee :=u.GetString("yuee")
+	yuee := u.GetString("yuee")
 	card_type := u.GetString("cardtype")
 	o := orm.NewOrm()
 	//user := User{Id: 1}
 	var user models.User
 	o.QueryTable("user").Filter("card_num", card_num).One(&user)
-	result["err"] =  -1
-	result["result"] =  ""
-	result["num"] =  0
-	beego.Info("cardsadasdasdasdasdasdasd",card_num, user, o.Read(&user))
+	result["err"] = -1
+	result["result"] = ""
+	result["num"] = 0
+	beego.Info("cardsadasdasdasdasdasdasd", card_num, user, o.Read(&user))
 	if o.Read(&user) == nil {
-		real_int,_:=strconv.Atoi(yuee)
+		real_int, _ := strconv.Atoi(yuee)
 		user.Yueee = real_int
 		user.UserType = card_type
 		beego.Info("asdasd", user)
@@ -104,34 +101,30 @@ func (u *UserController) UpdateUserYuee() {
 			result["err"] = err
 		}
 	}
-	u.Data["json"]  = result
+	u.Data["json"] = result
 	u.ServeJSON()
 }
 
 func (u *UserController) FindByCard() {
-	result :=make(map[string]interface{})
-	if  u.GetString("cardnum") != ""{
-
+	result := make(map[string]interface{})
+	if u.GetString("cardnum") != "" {
 		var users []models.User
 		o := orm.NewOrm()
-		num, err:= o.QueryTable("user").Filter("card_num", u.GetString("cardnum")).All(&users)
-
+		num, err := o.QueryTable("user").Filter("card_num", u.GetString("cardnum")).All(&users)
 		result["num"] = num
 		result["result"] = users
 		result["err"] = err
-		u.Data["json"]  = result
+		u.Data["json"] = result
 		u.ServeJSON()
-	}else {
+	} else {
 		result["err"] = -1
-		u.Data["json"]  = result
+		u.Data["json"] = result
 		u.ServeJSON()
 	}
 }
 
-
-
 func (u *UserController) Add() {
-	result :=make(map[string]interface{})
+	result := make(map[string]interface{})
 	o := orm.NewOrm()
 	var user models.User
 	user.Username = u.GetString("username")
@@ -140,35 +133,34 @@ func (u *UserController) Add() {
 	user.Jiankangzhishu = u.GetString("JianKang")
 	user.Gender = u.GetString("xingbie")
 
-
-	toBeCharge := u.GetString("shengri")                         //待转化为时间戳的字符串 注意 这里的小时和分钟还要秒必须写 因为是跟着模板走的 修改模板的话也可以不写
+	toBeCharge := u.GetString("shengri")                            //待转化为时间戳的字符串 注意 这里的小时和分钟还要秒必须写 因为是跟着模板走的 修改模板的话也可以不写
 	timeLayout := "2006-01-02 15:04:05"                             //转化所需模板
 	loc, _ := time.LoadLocation("Local")                            //重要：获取时区
 	theTime, _ := time.ParseInLocation(timeLayout, toBeCharge, loc) //使用模板在对应时区转化为time.time类型
-	user.CreateDate =  theTime
+	user.CreateDate = theTime
 	user.Shengao = u.GetString("shengao")
 	user.Tizhong = u.GetString("tizhong")
 
-
-	num , err :=  o.Insert(&user)
+	num, err := o.Insert(&user)
 	result["num"] = num
 	result["result"] = num
 	result["err"] = err
-	u.Data["json"]  = result
+	u.Data["json"] = result
 	u.ServeJSON()
 }
+
 // @router /info [get]
 func (u *UserController) Info() {
-	result :=make(map[string]interface{})
+	result := make(map[string]interface{})
 	var users []models.User
 	o := orm.NewOrm()
-	num, err:= o.QueryTable("user").All(&users)
+	num, err := o.QueryTable("user").All(&users)
 
 	logs.Warn("aasdasdasda")
 	result["num"] = num
 	result["result"] = users
 	result["err"] = err
-	u.Data["json"]  = result
+	u.Data["json"] = result
 	u.ServeJSON()
 }
 
@@ -290,4 +282,3 @@ func (u *UserController) Logout() {
 	u.Data["json"] = "logout success"
 	u.ServeJSON()
 }
-

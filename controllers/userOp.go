@@ -7,20 +7,18 @@ import (
 )
 
 //   管理用户操作记录
-
 type UserOpController struct {
 	beego.Controller
 }
 
-
-func (uop * UserOpController) Getall(){
-	result :=make(map[string]interface{})
+func (uop *UserOpController) Getall() {
+	result := make(map[string]interface{})
 	result["num"] = 0
 	result["err"] = ""
 	result["result"] = ""
 
 	// var _l_user_op_list  []models.UserOp
-	if  fl_l_user_op_list, num, err := models.GetAllUserOp(); err !=nil{
+	if fl_l_user_op_list, num, err := models.GetAllUserOp(); err != nil {
 		result["num"] = num
 		result["err"] = err
 		result["result"] = ""
@@ -33,7 +31,6 @@ func (uop * UserOpController) Getall(){
 	uop.Data["json"] = result
 	uop.ServeJSON()
 }
-
 
 func (uop *UserOpController) Add() {
 	result := make(map[string]interface{})
@@ -63,7 +60,7 @@ func (uop *UserOpController) Add() {
 	uop.ServeJSON()
 }
 
-func (uop * UserOpController) Delelte()  {
+func (uop *UserOpController) Delelte() {
 	result := make(map[string]interface{})
 	result["num"] = 0
 	result["err"] = ""
@@ -78,7 +75,7 @@ func (uop * UserOpController) Delelte()  {
 		uop.ServeJSON()
 	}
 
-	if err := models.DelUserOp(op_id); err != nil{
+	if err := models.DelUserOp(op_id); err != nil {
 		result["num"] = 0
 		result["err"] = -2
 		result["result"] = "删除高级用户记录出现了错误"

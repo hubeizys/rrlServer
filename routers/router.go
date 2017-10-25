@@ -48,6 +48,10 @@ func init() {
 		beego.NSNamespace("/power",
 			beego.NSRouter("/add", &controllers.UserPowerController{}, "get:Add"),
 			beego.NSRouter("/login", &controllers.UserPowerController{}, "get:Login"),
+			beego.NSRouter("/test/:uid", &controllers.UserPowerController{}, "get:PutPower"),
+			beego.NSRouter("/getpower", &controllers.UserPowerController{}, "get:GetPower"),
+			beego.NSRouter("/all", &controllers.UserPowerController{}, "get:GetAll"),
+			beego.NSRouter("/del", &controllers.UserPowerController{}, "get:DeletePower"),
 		),
 	)
 
