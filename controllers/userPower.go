@@ -10,6 +10,9 @@ import (
 	"encoding/json"
 )
 
+// 用户权限这里就和   普通的用户表切开，
+// 即 : user power 表只有管理者 还有 最高用户，  user表就是 普通的消费客户
+
 type UserPowerController struct {
 	beego.Controller
 }
@@ -22,6 +25,8 @@ func (userPower *UserPowerController) Add() {
 	result["result"] = ""
 
 	var _l_userpower models.UserPower
+
+	logs.Info("请求数据是 ：%s ",userPower.Ctx.Input.RequestBody)
 	err := json.Unmarshal(userPower.Ctx.Input.RequestBody, &_l_userpower)
 	if err != nil {
 		result["err"] = -1
@@ -29,6 +34,9 @@ func (userPower *UserPowerController) Add() {
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
 	}
+
+	// todo 正常的情况 是这里就应该去判断 和过滤 ， 但是为了偷懒 就把异常交给数据库
+	// ！！！！！以后小朋友 看到以后 千万不要学！！！！！！！！！
 
 	if id, err := models.AddUserPower(_l_userpower); err != nil {
 		result["err"] = -2
@@ -175,6 +183,7 @@ func (userPower *UserPowerController) Login() {
 
 	logs.Info("user name : %s", user)
 
+	// TODO 密码机制脆弱，不安全，先偷懒，以后更新
 	in_password := user.Password
 
 	//------------------------------------------------------------------------------//
@@ -191,6 +200,7 @@ func (userPower *UserPowerController) Login() {
 
 	if md5string != password {
 		result["err"] = -2
+		// Todo 神经病。
 		result["result"] = "密码不正确  正确的密码应该是" + md5string
 		userPower.Data["json"] = result
 		userPower.ServeJSON()

@@ -13,9 +13,9 @@ type UserOp struct {
 	OpRecordId int64        `orm:"column(id);pk;auto" json:"record_id"`
 	UserId     int64        `orm:"null" json:"be_op_user"` // 被操作的人
 	OpUserId   int64        `orm:"null" json:"op_user"`    // 操作者
-	Op         string        `orm:"size(64)" json:"op"`    // 操作项目
+	Op         string       `orm:"size(64)" json:"op"`     // 操作项目
 	OpDate     time.Time    `orm:"auto_now_add;type(datetime);null" json:"op_date"`
-	OpRemark   string        `orm:"size(128)"  json:"op_remark"`
+	OpRemark   string       `orm:"size(128)"  json:"op_remark"`
 }
 
 func init() {

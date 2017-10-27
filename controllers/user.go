@@ -11,6 +11,9 @@ import (
 	"github.com/astaxie/beego/logs"
 )
 
+// 此用户表中只包含 普通的消费客户
+
+
 // Operations about Users
 type UserController struct {
 	beego.Controller

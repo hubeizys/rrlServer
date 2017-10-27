@@ -15,11 +15,14 @@ import (
 
 func init() {
 	user_ns := beego.NewNamespace("/user",
-		beego.NSNamespace("/object",
+		beego.NSNamespace("/object",		// todo 就是留着占个位置，不然不好看
 			beego.NSInclude(
 				&controllers.ObjectController{},
 			),
 		),
+
+		// Todo 注解路由太骚包了。 不建议使用。
+		// TODO 自动挡把接口隐藏了， 处女座程序员可以用一用
 		beego.NSRouter("/map", &controllers.UserController{}, "get:URLMapping"),
 		beego.NSRouter("/update", &controllers.UserController{}, "get:UpdateUserYuee"),
 		beego.NSRouter("/updateBase", &controllers.UserController{}, "get:UpdateUserBase"),
@@ -46,7 +49,7 @@ func init() {
 		),
 
 		beego.NSNamespace("/power",
-			beego.NSRouter("/add", &controllers.UserPowerController{}, "get:Add"),
+			beego.NSRouter("/add", &controllers.UserPowerController{}, "post:Add"),
 			beego.NSRouter("/login", &controllers.UserPowerController{}, "get:Login"),
 			beego.NSRouter("/test/:uid", &controllers.UserPowerController{}, "get:PutPower"),
 			beego.NSRouter("/getpower", &controllers.UserPowerController{}, "get:GetPower"),

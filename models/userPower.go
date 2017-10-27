@@ -7,6 +7,7 @@ import (
 
 type UserPower struct {
 	UserID    int64 `orm:"pk"`
+	PassWord  string 	//todo  现在没有内加密。明文密码是不被赞许的，现在先偷个懒
 	PowerLev  int
 	PowerInfo string `orm:"size(2048)" json:"power_info"`
 	Remark    string `orm:"size(64)" json:"remark"`
@@ -16,14 +17,14 @@ func init() {
 	orm.RegisterModel(new(UserPower))
 }
 
-func AddUserPower(upower UserPower) (int64, error) {
+func AddUserPower(u_power UserPower) (int64, error) {
 	o := orm.NewOrm()
-	var l_upower UserPower
-	l_upower.PowerInfo = upower.PowerInfo
-	l_upower.PowerLev = upower.PowerLev
-	l_upower.Remark = upower.Remark
-	l_upower.UserID = upower.UserID
-	return o.Insert(&upower)
+	var _l_upower UserPower
+	_l_upower.PowerInfo = u_power.PowerInfo
+	_l_upower.PowerLev = u_power.PowerLev
+	_l_upower.Remark = u_power.Remark
+	_l_upower.UserID = u_power.UserID
+	return o.Insert(&u_power)
 }
 
 func GetPower(user_id int64) (UserPower, error) {
@@ -33,21 +34,20 @@ func GetPower(user_id int64) (UserPower, error) {
 	return _l_userpower, err
 }
 
-func GetAllPower() ([]*UserPower, int64, error){
+func GetAllPower() ([]*UserPower, int64, error) {
 	o := orm.NewOrm()
-	var _l_power_list  []*UserPower
-	num, err :=  o.QueryTable(UserPower{}).Offset(0).All(&_l_power_list)
+	var _l_power_list []*UserPower
+	num, err := o.QueryTable(UserPower{}).Offset(0).All(&_l_power_list)
 	//fmt.Printf("ret %s, err %s", num, err)
 	logs.Info("ret %d, err %s", num, err)
 	logs.Info("ret %s", _l_power_list)
 	return _l_power_list, num, err
 }
 
-
 // 非常严肃情况下的使用
-func DelPowerById(p_user_id int64)(int64 , error)  {
+func DelPowerById(p_user_id int64) (int64, error) {
 	o := orm.NewOrm()
-	return o.Delete(&UserPower{UserID:p_user_id})
+	return o.Delete(&UserPower{UserID: p_user_id})
 }
 
 func UpdateUserPower(uid int64, power UserPower) (int64, error) {
