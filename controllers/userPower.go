@@ -40,7 +40,7 @@ func (userPower *UserPowerController) Add() {
 
 	if id, err := models.AddUserPower(_l_userpower); err != nil {
 		result["err"] = -2
-		result["result"] = id
+		result["result"] = err
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
 	} else {
@@ -72,10 +72,10 @@ func (userPower *UserPowerController) GetPower() {
 	result["err"] = 0
 	result["num"] = 0
 
-	var l_user_id int64
-	if user_id, err := userPower.GetInt64("user_id"); err != nil {
+	var l_user_id string
+	if user_id  := userPower.GetString("user_id"); user_id == "" {
 		result["err"] = -1
-		result["result"] = err
+		result["result"] = "用户id异常"
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
 	} else {
@@ -109,11 +109,11 @@ func (userPower *UserPowerController) UpdatePower() {
 	result["num"] = 0
 	result["result"] = ""
 
-	var l_uid int64
+	var l_uid string
 	var l_err error
-	if l_uid, l_err = userPower.GetInt64("uid"); l_err != nil {
+	if l_uid  = userPower.GetString("uid"); l_uid == "" {
 		result["err"] = -1
-		result["result"] = "没有找到用户信息"
+		result["result"] = "用户id异常"
 		logs.Info("uid === %s", l_uid)
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
@@ -137,13 +137,13 @@ func (userPower *UserPowerController) DeletePower() {
 	result["num"] = 0
 	result["result"] = ""
 
-	var _l_user_id int64
+	var _l_user_id string
 	var _l_err  error
 	var _l_num  int64
 
-	if _l_user_id , _l_err = userPower.GetInt64("user_id"); _l_err != nil{
+	if _l_user_id  = userPower.GetString("user_id"); _l_user_id == ""{
 		result["err"] = -1
-		result["result"] = "没有得到正确的参数"
+		result["result"] = "用户名一样"
 		logs.Info("user id 的结果是 %d", _l_user_id)
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
@@ -170,9 +170,9 @@ func (userPower *UserPowerController) Login() {
 	utime := userPower.GetString("utime")
 
 	o := orm.NewOrm()
-	var user models.User
+	var user models.UserPower
 
-	o.QueryTable("user").Filter("username", username).One(&user)
+	o.QueryTable(models.UserPower{}).Filter("UserID", username).One(&user)
 	logs.Error("err: %s", o.Read(&user))
 	if o.Read(&user) != nil {
 		result["result"] = "用户名或者密码错误"
@@ -184,19 +184,19 @@ func (userPower *UserPowerController) Login() {
 	logs.Info("user name : %s", user)
 
 	// TODO 密码机制脆弱，不安全，先偷懒，以后更新
-	in_password := user.Password
+	in_password := user.PassWord
 
 	//------------------------------------------------------------------------------//
 	// 判断 加密 是不是对的
 	// 用户名 + “neplite” + 密码 + "iampassword" + unix 时间戳
 	password_key := username + "neplite" + in_password + "iampassword" + utime
 	// 判断是不是 加密正常
-
+	logs.Info("加密保密串是 ==%s== ", password_key)
 	beego.Warn("明文密码是： - %s -", in_password)
 
 	data := []byte(password_key)
 	has := md5.Sum(data)
-	md5string := fmt.Sprintf("%x", has)
+	md5string := fmt.Sprintf("%X", has)
 
 	if md5string != password {
 		result["err"] = -2

@@ -6,7 +6,7 @@ import (
 )
 
 type UserPower struct {
-	UserID    int64 `orm:"pk"`
+	UserID    string `orm:"pk"`
 	PassWord  string 	//todo  现在没有内加密。明文密码是不被赞许的，现在先偷个懒
 	PowerLev  int
 	PowerInfo string `orm:"size(2048)" json:"power_info"`
@@ -27,7 +27,7 @@ func AddUserPower(u_power UserPower) (int64, error) {
 	return o.Insert(&u_power)
 }
 
-func GetPower(user_id int64) (UserPower, error) {
+func GetPower(user_id string) (UserPower, error) {
 	o := orm.NewOrm()
 	var _l_userpower UserPower
 	err := o.QueryTable(UserPower{UserID: user_id}).One(&_l_userpower)
@@ -45,19 +45,20 @@ func GetAllPower() ([]*UserPower, int64, error) {
 }
 
 // 非常严肃情况下的使用
-func DelPowerById(p_user_id int64) (int64, error) {
+func DelPowerById(p_user_id string) (int64, error) {
 	o := orm.NewOrm()
 	return o.Delete(&UserPower{UserID: p_user_id})
 }
 
-func UpdateUserPower(uid int64, power UserPower) (int64, error) {
+func UpdateUserPower(uid string, power UserPower) (string, error) {
 	o := orm.NewOrm()
 	_l_power := UserPower{UserID: uid}
 	if read_err := o.Read(&_l_power); read_err == nil {
 		_l_power.Remark = power.Remark
 		_l_power.PowerLev = power.PowerLev
 		_l_power.PowerInfo = power.PowerInfo
-		return o.Update(&_l_power)
+		num, err := o.Update(&_l_power)
+		return string(num), err
 	} else {
 		return uid, read_err
 	}
