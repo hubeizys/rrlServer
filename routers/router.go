@@ -15,7 +15,7 @@ import (
 
 func init() {
 	user_ns := beego.NewNamespace("/user",
-		beego.NSNamespace("/object",		// todo 就是留着占个位置，不然不好看
+		beego.NSNamespace("/object", // todo 就是留着占个位置，不然不好看
 			beego.NSInclude(
 				&controllers.ObjectController{},
 			),
@@ -55,7 +55,13 @@ func init() {
 			beego.NSRouter("/getpower", &controllers.UserPowerController{}, "get:GetPower"),
 			beego.NSRouter("/all", &controllers.UserPowerController{}, "get:GetAll"),
 			beego.NSRouter("/del", &controllers.UserPowerController{}, "get:DeletePower"),
+			beego.NSRouter("/getnpower", &controllers.UserPowerController{}, "get:GetNormalPower"),
 		),
+	)
+
+	comm_ns := beego.NewNamespace("/comm",
+		beego.NSRouter("/get", &controllers.SomeNewsController{}, "get:GetAll"),
+		beego.NSRouter("/add", &controllers.SomeNewsController{}, "post:Add"),
 	)
 
 	wuliao_ns := beego.NewNamespace("wuliao",
@@ -74,5 +80,5 @@ func init() {
 			beego.NSRouter("/del", &controllers.GoodsRecordController{}, "get:Del"),
 		),
 	)
-	beego.AddNamespace(user_ns, wuliao_ns)
+	beego.AddNamespace(user_ns, wuliao_ns, comm_ns)
 }

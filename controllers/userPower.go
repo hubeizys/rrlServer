@@ -8,6 +8,7 @@ import (
 	"crypto/md5"
 	"github.com/astaxie/beego/logs"
 	"encoding/json"
+	"nepliteApi/comm"
 )
 
 // 用户权限这里就和   普通的用户表切开，
@@ -26,7 +27,7 @@ func (userPower *UserPowerController) Add() {
 
 	var _l_userpower models.UserPower
 
-	logs.Info("请求数据是 ：%s ",userPower.Ctx.Input.RequestBody)
+	logs.Info("请求数据是 ：%s ", userPower.Ctx.Input.RequestBody)
 	err := json.Unmarshal(userPower.Ctx.Input.RequestBody, &_l_userpower)
 	if err != nil {
 		result["err"] = -1
@@ -51,13 +52,12 @@ func (userPower *UserPowerController) Add() {
 	userPower.ServeJSON()
 }
 
-
-func (userPower *UserPowerController) GetAll(){
+func (userPower *UserPowerController) GetAll() {
 	result := make(map[string]interface{})
 	result["err"] = 0
 	result["num"] = 0
 
-	power_list , num, err  := models.GetAllPower()
+	power_list, num, err := models.GetAllPower()
 	result["result"] = power_list
 	result["err"] = err
 	result["num"] = num
@@ -73,7 +73,7 @@ func (userPower *UserPowerController) GetPower() {
 	result["num"] = 0
 
 	var l_user_id string
-	if user_id  := userPower.GetString("user_id"); user_id == "" {
+	if user_id := userPower.GetString("user_id"); user_id == "" {
 		result["err"] = -1
 		result["result"] = "用户id异常"
 		userPower.Data["json"] = result
@@ -82,7 +82,6 @@ func (userPower *UserPowerController) GetPower() {
 		l_user_id = user_id
 		result["result"] = user_id
 	}
-
 	if r_userpower, err := models.GetPower(l_user_id); err != nil {
 		result["err"] = -2
 		result["result"] = err
@@ -90,6 +89,39 @@ func (userPower *UserPowerController) GetPower() {
 		result["result"] = r_userpower
 	}
 	userPower.Data["json"] = result
+	userPower.ServeJSON()
+}
+
+// 获得非管理员用户的权限
+func (userPower *UserPowerController) GetNormalPower() {
+	result := comm.Result{Ret: map[string]interface{}{"err": "", "num": 0, "result": ""}}
+	logs.Info("result : == ", result.Ret)
+
+	var query_start int
+	var query_limit int
+	var err error
+
+	if query_start, err = userPower.GetInt("start"); err != nil {
+		result.SetValue("-1", 0, "参数开始位置异常")
+		userPower.Data["json"] = result.Get()
+		userPower.ServeJSON()
+	}
+
+	if query_limit, err = userPower.GetInt("limit"); err != nil {
+		result.SetValue("-2", 0, "参数极限位置异常")
+		userPower.Data["json"] = result.Get()
+		userPower.ServeJSON()
+	}
+
+	if _l_uplist, num, err := models.GetPowerNornamls(query_start, query_limit); err != nil {
+		result.SetValue("-3", num, _l_uplist)
+		userPower.Data["json"] = result.Get()
+		userPower.ServeJSON()
+	} else {
+		result.SetValue("0", num, _l_uplist)
+	}
+
+	userPower.Data["json"] = result.Get()
 	userPower.ServeJSON()
 }
 
@@ -111,7 +143,7 @@ func (userPower *UserPowerController) UpdatePower() {
 
 	var l_uid string
 	var l_err error
-	if l_uid  = userPower.GetString("uid"); l_uid == "" {
+	if l_uid = userPower.GetString("uid"); l_uid == "" {
 		result["err"] = -1
 		result["result"] = "用户id异常"
 		logs.Info("uid === %s", l_uid)
@@ -138,10 +170,10 @@ func (userPower *UserPowerController) DeletePower() {
 	result["result"] = ""
 
 	var _l_user_id string
-	var _l_err  error
-	var _l_num  int64
+	var _l_err error
+	var _l_num int64
 
-	if _l_user_id  = userPower.GetString("user_id"); _l_user_id == ""{
+	if _l_user_id = userPower.GetString("user_id"); _l_user_id == "" {
 		result["err"] = -1
 		result["result"] = "用户名一样"
 		logs.Info("user id 的结果是 %d", _l_user_id)
@@ -149,7 +181,7 @@ func (userPower *UserPowerController) DeletePower() {
 		userPower.ServeJSON()
 	}
 
-	if _l_num, _l_err = models.DelPowerById(_l_user_id); _l_err != nil{
+	if _l_num, _l_err = models.DelPowerById(_l_user_id); _l_err != nil {
 		logs.Info("被操作的条目 %d", _l_num)
 		result["err"] = -2
 		result["result"] = "条目不正确"

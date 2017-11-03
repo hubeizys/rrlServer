@@ -7,7 +7,7 @@ import (
 
 type UserPower struct {
 	UserID    string `orm:"pk"`
-	PassWord  string 	//todo  现在没有内加密。明文密码是不被赞许的，现在先偷个懒
+	PassWord  string //todo  现在没有内加密。明文密码是不被赞许的，现在先偷个懒
 	PowerLev  int
 	PowerInfo string `orm:"size(2048)" json:"power_info"`
 	Remark    string `orm:"size(64)" json:"remark"`
@@ -41,6 +41,13 @@ func GetAllPower() ([]*UserPower, int64, error) {
 	//fmt.Printf("ret %s, err %s", num, err)
 	logs.Info("ret %d, err %s", num, err)
 	logs.Info("ret %s", _l_power_list)
+	return _l_power_list, num, err
+}
+
+func GetPowerNornamls(start int, limit int) ([]*UserPower, int64, error) {
+	o := orm.NewOrm()
+	var _l_power_list [] *UserPower
+	num, err := o.QueryTable(UserPower{}).Limit(limit, start).All(&_l_power_list, "UserID", "PowerLev", "PowerInfo", "Remark")
 	return _l_power_list, num, err
 }
 

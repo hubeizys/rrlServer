@@ -4,7 +4,6 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"nepliteApi/models"
-
 )
 
 type SalesController struct {
@@ -93,8 +92,6 @@ func (sales * SalesController) Add(){
 
 		}
 	}
-
-
 	sales.Data["json"] = result
 	sales.ServeJSON()
 }
