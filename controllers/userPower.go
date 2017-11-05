@@ -151,14 +151,36 @@ func (userPower *UserPowerController) UpdatePower() {
 		userPower.ServeJSON()
 	}
 
+	/*
 	var l_userpower models.UserPower
 	if l_userpower, l_err = models.GetPower(l_uid); l_err != nil {
 		result["err"] = -2
 		result["result"] = "获取power信息失败"
 		userPower.Data["json"] = result
 		userPower.ServeJSON()
+	}*/
+	var _l_userpower models.UserPower
+	logs.Info("请求数据是 ：%s ", userPower.Ctx.Input.RequestBody)
+	err := json.Unmarshal(userPower.Ctx.Input.RequestBody, &_l_userpower)
+	//logs.Info("err == ! == " + err.Error())
+	if err != nil {
+		result["err"] = -2
+		result["result"] = err
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
 	}
-	result["result"] = l_userpower
+
+	var r_num int64
+	if r_num, l_err = models.UpdateUserPower(l_uid, _l_userpower); l_err!=nil{
+		result["num"] = r_num
+		result["err"] = -3
+		result["result"] = l_err
+		userPower.Data["json"] = result
+		userPower.ServeJSON()
+	}else {
+		result["num"] = r_num
+	}
+	result["result"] = _l_userpower.PowerInfo
 	userPower.Data["json"] = result
 	userPower.ServeJSON()
 }

@@ -9,7 +9,7 @@ type UserPower struct {
 	UserID    string `orm:"pk"`
 	PassWord  string //todo  现在没有内加密。明文密码是不被赞许的，现在先偷个懒
 	PowerLev  int
-	PowerInfo string `orm:"size(2048)" json:"power_info"`
+	PowerInfo string `orm:"size(2048)" `  // json:"power_info"
 	Remark    string `orm:"size(64)" json:"remark"`
 }
 
@@ -57,16 +57,17 @@ func DelPowerById(p_user_id string) (int64, error) {
 	return o.Delete(&UserPower{UserID: p_user_id})
 }
 
-func UpdateUserPower(uid string, power UserPower) (string, error) {
+func UpdateUserPower(uid string, power UserPower) (int64, error) {
 	o := orm.NewOrm()
 	_l_power := UserPower{UserID: uid}
 	if read_err := o.Read(&_l_power); read_err == nil {
-		_l_power.Remark = power.Remark
-		_l_power.PowerLev = power.PowerLev
+		//_l_power.Remark = power.Remark
+		//_l_power.PowerLev = power.PowerLev
 		_l_power.PowerInfo = power.PowerInfo
 		num, err := o.Update(&_l_power)
-		return string(num), err
+		logs.Info("power info " + _l_power.PowerInfo)
+		return num, err
 	} else {
-		return uid, read_err
+		return 0, read_err
 	}
 }
