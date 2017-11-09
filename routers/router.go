@@ -46,8 +46,8 @@ func init() {
 			beego.NSRouter("/yingli", &controllers.SalesController{}, "get:Yingli"),
 			beego.NSRouter("/getall", &controllers.SalesController{}, "get:Getall"),
 			beego.NSRouter("/add", &controllers.SalesController{}, "get:Add"),
-			beego.NSRouter("/reportadd", &controllers.ReportRecordConrtroller{}, "post:AddRecord"),
-			beego.NSRouter("/report", &controllers.ReportRecordConrtroller{}, "get:GetRecordByname"),
+			beego.NSRouter("/reportadd", &controllers.ReportRecordController{}, "post:AddRecord"),
+			beego.NSRouter("/report", &controllers.ReportRecordController{}, "get:GetRecordByname"),
 		),
 
 		beego.NSNamespace("/power",

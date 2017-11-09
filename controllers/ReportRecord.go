@@ -8,11 +8,11 @@ import (
 	"github.com/astaxie/beego/logs"
 )
 
-type ReportRecordConrtroller struct {
+type ReportRecordController struct {
 	beego.Controller
 }
 
-func (record *ReportRecordConrtroller) AddRecord() {
+func (record *ReportRecordController) AddRecord() {
 	result := comm.Result{Ret: map[string]interface{}{"err": "aaa", "num": 0, "result": ""}}
 	var rp_cprd  models.ReportRecord
 	if err := json.Unmarshal(record.Ctx.Input.RequestBody, &rp_cprd); err!= nil{
@@ -34,7 +34,7 @@ func (record *ReportRecordConrtroller) AddRecord() {
 
 
 
-func (record *ReportRecordConrtroller) GetRecordByname() {
+func (record *ReportRecordController) GetRecordByname() {
 	result := comm.Result{Ret: map[string]interface{}{"err": "aaa", "num": 0, "result": ""}}
 	var query_start int
 	var query_limit int
