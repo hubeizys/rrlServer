@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "nepliteApi/routers"
-	_ "github.com/mattn/go-sqlite3"
+	//_ "github.com/mattn/go-sqlite3"
 	"github.com/astaxie/beego"
 	_ "nepliteApi/models"
 	"github.com/astaxie/beego/orm"
