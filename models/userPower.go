@@ -30,7 +30,8 @@ func AddUserPower(u_power UserPower) (int64, error) {
 func GetPower(user_id string) (UserPower, error) {
 	o := orm.NewOrm()
 	var _l_userpower UserPower
-	err := o.QueryTable(UserPower{UserID: user_id}).One(&_l_userpower)
+	err := o.QueryTable(UserPower{UserID: user_id}).Filter("user_i_d" , user_id).One(&_l_userpower)
+	logs.Warn("get power user err %s == _l_userpower %s ", err, _l_userpower)
 	return _l_userpower, err
 }
 

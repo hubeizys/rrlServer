@@ -9,6 +9,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/astaxie/beego/logs"
 )
+
 func init() {
 	dbType := beego.AppConfig.String("db_type")
 	dbAlias := beego.AppConfig.String(dbType + "::db_alias")
@@ -21,7 +22,7 @@ func init() {
 	orm.RegisterDriver(dbType, orm.DRMySQL)
 	//orm.RegisterDataBase("default", "sqlite3", "neplite.db")
 	// dbCharset := beego.AppConfig.String(dbType + "db_charset")
-	dataSource := dbUser + ":" + dbPwd + "@tcp(" +dbHost + ":"+ dbPort +")/" + dbName + "?charset=utf8"
+	dataSource := dbUser + ":" + dbPwd + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8"
 	logs.Info("%s==== %s", dbAlias, dataSource)
 	orm.RegisterDataBase(dbAlias, dbType, dataSource)
 	orm.RunSyncdb("default", false, true)

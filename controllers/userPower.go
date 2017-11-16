@@ -82,6 +82,7 @@ func (userPower *UserPowerController) GetPower() {
 		l_user_id = user_id
 		result["result"] = user_id
 	}
+	logs.Error("GetPower : user id == %s", l_user_id)
 	if r_userpower, err := models.GetPower(l_user_id); err != nil {
 		result["err"] = -2
 		result["result"] = err
