@@ -24,14 +24,15 @@ func (group *GroupController) Add() {
 		group.Data["json"] = result.Get()
 		group.ServeJSON()
 	}
+	logs.Warn("asdasd  %s", _l_group)
 
-	if _l_group, err := models.GetGroupByUserID(_l_group.GroupMasterID); err != nil {
+	if _l_group, err := models.GetGroupByUserID(_l_group.GroupMasterID); err == nil {
 		result.SetValue("-2", 0, "已经添加过了， 请不要重复添加店名")
 		group.Data["json"] = result.Get()
 		group.ServeJSON()
-		logs.Warn("_l_group ==  %s", _l_group)
+		logs.Warn("_l_group ==  %s; %s", _l_group, err)
 	}
-
+	logs.Warn("dasdasdasdasdsadsad")
 	if id, err := models.AddGroup(_l_group); err != nil {
 		result.SetValue("-2", 0, err)
 		group.Data["json"] = result.Get()
