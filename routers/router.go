@@ -49,6 +49,10 @@ func init() {
 			beego.NSRouter("/reportadd", &controllers.ReportRecordController{}, "post:AddRecord"),
 			beego.NSRouter("/report", &controllers.ReportRecordController{}, "get:GetRecordByname"),
 		),
+		beego.NSNamespace("/group",
+			beego.NSRouter("/add", &controllers.GroupController{}, "post:Add"),
+			beego.NSRouter("/getbymasterid", &controllers.GroupController{}, "get:GetByUserId"),
+		),
 
 		beego.NSNamespace("/power",
 			beego.NSRouter("/add", &controllers.UserPowerController{}, "post:Add"),
