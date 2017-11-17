@@ -54,19 +54,18 @@ func (goodRcd *GoodsRecordController) Chuku() {
 		Where(`op = "出库"`)
 
 	sql := qb.String()
-	if num, err2 := o.Raw(sql, 20).QueryRows(&gds); err2 != nil {
+	if num, err2 := o.Raw(sql).QueryRows(&gds); err2 != nil {
 		beego.Info("qb=============", num, "123123123123", err2, gds)
 		result.SetValue("-1", num, err2)
 		goodRcd.Data["json"] = result.Get()
 		goodRcd.ServeJSON()
-	}
-
-	result.SetValue("0", 0, gds)
+	} else {
+	result.SetValue("0", num, gds)}
 	/*result["num"] = num
 	result["err"] = err2
 	result["result"] = gds
 	*/
-	goodRcd.Data["json"] = result
+	goodRcd.Data["json"] = result.Get()
 	goodRcd.ServeJSON()
 }
 
@@ -96,7 +95,7 @@ func (goodRcd *GoodsRecordController) Ruku() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 	beego.Info("qb=============", qb)
 
-	qb.Select("goods_record.name,goods_record.Goods_price,goods_record.OpNum, goods_record.goods_bus,goods_record.goods_type,goods_record.goods_price, goods_record.create_date, user.username").
+	qb.Select("goods_record.op_goods_i_d,goods_record.name,goods_record.Goods_price,goods_record.OpNum, goods_record.goods_bus,goods_record.goods_type,goods_record.goods_price, goods_record.create_date, user.username").
 		From("goods_record").LeftJoin("user").On("goods_record.op_user = user.id").
 		Where(`op = "入库"`)
 	sql := qb.String()
@@ -113,7 +112,7 @@ func (goodRcd *GoodsRecordController) Ruku() {
 	result["num"] = num
 	result["err"] = err
 	result["result"] = gds*/
-	goodRcd.Data["json"] = result
+	goodRcd.Data["json"] = result.Get()
 	goodRcd.ServeJSON()
 }
 
