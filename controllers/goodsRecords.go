@@ -18,9 +18,9 @@ func (goodRcd *GoodsRecordController) Get() {
 	result := make(map[string]interface{})
 	var goods_records []models.GoodsRecord
 	o := orm.NewOrm()
-	num, error := o.QueryTable("goods_record").All(&goods_records)
+	num, err := o.QueryTable("goods_record").All(&goods_records)
 	result["num"] = num
-	result["err"] = error
+	result["err"] = err
 	result["result"] = goods_records
 	goodRcd.Data["json"] = result
 	goodRcd.ServeJSON()
@@ -41,93 +41,90 @@ type GoodsRDINFO struct {
 func (goodRcd *GoodsRecordController) Chuku() {
 	result := comm.Result{Ret: map[string]interface{}{"err": "", "num": 0, "result": ""}}
 	logs.Info("result : == ", result.Ret)
-
-	//	result :=make(map[string]interface{})
-	o := orm.NewOrm()
-	var gds []GoodsRDINFO
-	qb, _ := orm.NewQueryBuilder("mysql")
-
-	qb.Select("goods_record.op_goods_i_d,goods_record.name,goods_record.Goods_price,goods_record.OpNum, goods_record.goods_bus,goods_record.goods_type,goods_record.goods_price, goods_record.create_date, user.username").
-		From("goods_record").
-		LeftJoin("user").
-		On("goods_record.op_user = user.id").
-		Where(`op = "出库"`)
-
-	sql := qb.String()
-	if num, err2 := o.Raw(sql).QueryRows(&gds); err2 != nil {
-		beego.Info("qb=============", num, "123123123123", err2, gds)
-		result.SetValue("-1", num, err2)
+	if creat_user, err := goodRcd.GetInt64("User_id"); err != nil {
+		result.SetValue("-1", 0, "用户ID没有被提交")
 		goodRcd.Data["json"] = result.Get()
 		goodRcd.ServeJSON()
 	} else {
-	result.SetValue("0", num, gds)}
-	/*result["num"] = num
-	result["err"] = err2
-	result["result"] = gds
-	*/
-	goodRcd.Data["json"] = result.Get()
-	goodRcd.ServeJSON()
+		//	result :=make(map[string]interface{})
+		o := orm.NewOrm()
+		var gds []GoodsRDINFO
+		qb, _ := orm.NewQueryBuilder("mysql")
+
+		qb.Select("goods_record.op_goods_i_d,goods_record.name,goods_record.Goods_price,goods_record.OpNum, goods_record.goods_bus,goods_record.goods_type,goods_record.goods_price, goods_record.create_date, user.username").
+			From("goods_record").
+			LeftJoin("user").
+			On("goods_record.op_user = user.id").
+			Where(fmt.Sprintf(`op = "出库" and op_user = %d`, creat_user))
+
+		sql := qb.String()
+		if num, err2 := o.Raw(sql).QueryRows(&gds); err2 != nil {
+			beego.Info("qb=============", num, "123123123123", err2, gds)
+			result.SetValue("-1", num, err2)
+			goodRcd.Data["json"] = result.Get()
+			goodRcd.ServeJSON()
+		} else {
+			result.SetValue("0", num, gds)
+		}
+		goodRcd.Data["json"] = result.Get()
+		goodRcd.ServeJSON()
+	}
+
 }
 
 func (goodRcd *GoodsRecordController) Ruku() {
 
 	result := comm.Result{Ret: map[string]interface{}{"err": "", "num": 0, "result": ""}}
 	logs.Info("result : == ", result.Ret)
-	/*
-		result :=make(map[string]interface{})
-	*/
-	// var goods_records  []models.GoodsRecord
-	o := orm.NewOrm()
-
-	var gds []GoodsRDINFO
-	/*
-	var maps []orm.Params
-	num, error := o.QueryTable("goods_record").RelatedSel().Values(&maps,"username")
-	beego.Info("err", error, maps)
-	qb, err :=  orm.NewQueryBuilder("mysql")
-	beego.Info("qb=============", qb)
-
-	qb.Select("goods_record.name").
-		From("goods_record").
-		LeftJoin("user").
-		On("goods_record.op_user_id = user.id")
-	*/
-	qb, _ := orm.NewQueryBuilder("mysql")
-	beego.Info("qb=============", qb)
-
-	qb.Select("goods_record.op_goods_i_d,goods_record.name,goods_record.Goods_price,goods_record.OpNum, goods_record.goods_bus,goods_record.goods_type,goods_record.goods_price, goods_record.create_date, user.username").
-		From("goods_record").LeftJoin("user").On("goods_record.op_user = user.id").
-		Where(`op = "入库"`)
-	sql := qb.String()
-	beego.Info("qb=============", sql)
-	if num, err2 := o.Raw(sql).QueryRows(&gds); err2 != nil {
-		result.SetValue("-1", num, err2)
-		logs.Warn("qb=============%s|%s|%s|%s", num, "123123123123", err2, gds)
+	if creat_user, err := goodRcd.GetInt64("User_id"); err != nil {
+		result.SetValue("-1", 0, "用户ID没有被提交")
 		goodRcd.Data["json"] = result.Get()
 		goodRcd.ServeJSON()
 	} else {
-		result.SetValue("0", num, gds)
+		/*
+			result :=make(map[string]interface{})
+		*/
+		// var goods_records  []models.GoodsRecord
+		o := orm.NewOrm()
+		var gds []GoodsRDINFO
+		/*
+		var maps []orm.Params
+		num, error := o.QueryTable("goods_record").RelatedSel().Values(&maps,"username")
+		beego.Info("err", error, maps)
+		qb, err :=  orm.NewQueryBuilder("mysql")
+		beego.Info("qb=============", qb)
+
+		qb.Select("goods_record.name").
+			From("goods_record").
+			LeftJoin("user").
+			On("goods_record.op_user_id = user.id")
+		*/
+		qb, _ := orm.NewQueryBuilder("mysql")
+		beego.Info("qb=============", qb)
+
+		qb.Select("goods_record.op_goods_i_d,goods_record.name,goods_record.Goods_price,goods_record.OpNum, goods_record.goods_bus,goods_record.goods_type,goods_record.goods_price, goods_record.create_date, user.username").
+			From("goods_record").LeftJoin("user").On("goods_record.op_user = user.id").
+		//Where(`op = "入库"`)
+			Where(fmt.Sprintf(`op = "入库" and op_user = %d`, creat_user))
+
+		sql := qb.String()
+		beego.Info("qb=============", sql)
+		if num, err2 := o.Raw(sql).QueryRows(&gds); err2 != nil {
+			result.SetValue("-1", num, err2)
+			logs.Warn("qb=============%s|%s|%s|%s", num, "123123123123", err2, gds)
+			goodRcd.Data["json"] = result.Get()
+			goodRcd.ServeJSON()
+		} else {
+			result.SetValue("0", num, gds)
+		}
+
+		goodRcd.Data["json"] = result.Get()
+		goodRcd.ServeJSON()
 	}
-	/*
-	result["num"] = num
-	result["err"] = err
-	result["result"] = gds*/
-	goodRcd.Data["json"] = result.Get()
-	goodRcd.ServeJSON()
 }
 
 // chuku
 func (goodRcd *GoodsRecordController) Del() {
-	/*    "Op_goods_i_d": "123",
-		"GoodId": 0,
-		"Name": "sdas",
-		"Create_date": "2017-09-16 00:00:00 +0000 UTC",
-		"Username": "",
-		"Goods_bus": "123123",
-		"Goods_type": "41212",
-		"OpNum": 0,
-		"Goods_price": 123*/
-
 	GoodId, _ := goodRcd.GetInt("GoodId")
 	Name := goodRcd.GetString("Name")
 	Create_date := goodRcd.GetString("Create_date")
@@ -136,7 +133,7 @@ func (goodRcd *GoodsRecordController) Del() {
 	Goods_type := goodRcd.GetString("Goods_type")
 	OpNum, _ := goodRcd.GetInt64("OpNum")
 	Goods_price, _ := goodRcd.GetInt64("Goods_price")
-
+	creat_user, _ := goodRcd.GetInt64("User_id")
 	result := make(map[string]interface{})
 
 	o := orm.NewOrm()
@@ -150,6 +147,7 @@ func (goodRcd *GoodsRecordController) Del() {
 
 	goods_record.CreateDate = theTime
 	goods_record.GoodsBus = Goods_bus
+	goods_record.OpUser = creat_user
 	goods_record.GoodsType = Goods_type
 	goods_record.Op = "出库"
 	goods_record.OpNum = OpNum
@@ -190,6 +188,7 @@ func (goodRcd *GoodsRecordController) Add() {
 	Goods_type := goodRcd.GetString("Goods_type")
 	OpNum, _ := goodRcd.GetInt64("OpNum")
 	Goods_price, _ := goodRcd.GetInt64("Goods_price")
+	creat_user, _ := goodRcd.GetInt64("User_id")
 
 	result := make(map[string]interface{})
 
@@ -201,7 +200,7 @@ func (goodRcd *GoodsRecordController) Add() {
 	timeLayout := "2006-01-02 15:04:05"
 	loc, _ := time.LoadLocation("Local")
 	theTime, _ := time.ParseInLocation(timeLayout, Create_date, loc)
-
+	goods_record.OpUser = creat_user
 	goods_record.CreateDate = theTime
 	goods_record.GoodsBus = Goods_bus
 	goods_record.GoodsType = Goods_type
@@ -218,7 +217,7 @@ func (goodRcd *GoodsRecordController) Add() {
 		var goods models.Goods
 		//goods.Count = add_num
 		//goods.Name = add_name
-
+		goods.CreateUser = creat_user
 		goods.Count = OpNum
 		goods.GoodsId = GoodId
 		goods.Name = Name

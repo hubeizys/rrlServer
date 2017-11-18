@@ -21,7 +21,6 @@ type pandian struct {
 }
 
 func (pandianObj *PanDianController) Add() {
-
 	GoodsPDName := pandianObj.GetString("GoodsPDName")
 	GoodsPDResult := pandianObj.GetString("GoodsPDResult")
 	UserID,_ := pandianObj.GetInt64("ID")

@@ -27,18 +27,16 @@ func (goodsObj *GoodsController) Get()  {
 
 func (goodsObj *GoodsController) ShowAll()  {
 	result :=make(map[string]interface{})
-
+	userid,_ := goodsObj.GetInt64("userid")
 	var goods []models.Goods
-
 	o := orm.NewOrm()
-	num, err:=o.QueryTable("goods").Limit(100, 0).All(&goods)
+	num, err:=o.QueryTable("goods").Filter("create_user", userid).Limit(100, 0).All(&goods)
 	result["result"] = goods
 	result["num"] = num
 	result["err"] = err
 	goodsObj.Data["json"] = result
 	goodsObj.ServeJSON()
 }
-
 
 func (goodsObj *GoodsController) Add(){
 	result := make(map[string]interface{})
@@ -58,15 +56,6 @@ func (goodsObj *GoodsController) Add(){
 		result["num"] = 1
 		result["result"] = id
 	}
-
-	//goods.CreateUser =
-	//offset_start := goodsObj.GetString("start")
-	//offset_end := goodsObj.GetString("end")
-
-
-	//result["err1"] = err
-	//result["add_num"] = add_num
-
 	goodsObj.Data["json"] = result
 	goodsObj.ServeJSON()
 }

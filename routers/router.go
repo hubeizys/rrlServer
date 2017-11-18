@@ -71,7 +71,7 @@ func init() {
 		beego.NSRouter("/add", &controllers.SomeNewsController{}, "post:Add"),
 	)
 
-	wuliao_ns := beego.NewNamespace("wuliao",
+	wuliao_ns := beego.NewNamespace("/wuliao",
 		beego.NSInclude(
 			&controllers.NepliteControllers{},
 		),

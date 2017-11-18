@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"github.com/astaxie/beego/logs"
+	"nepliteApi/comm"
 )
 
 // 此用户表中只包含 普通的消费客户
@@ -109,21 +110,28 @@ func (u *UserController) UpdateUserYuee() {
 }
 
 func (u *UserController) FindByCard() {
-	result := make(map[string]interface{})
+	result := comm.Result{Ret: map[string]interface{}{"err": "", "num": 0, "result": ""}}
+	logs.Info("result : == ", result.Ret)
+	var users []models.User
+	o := orm.NewOrm()
+	//result := make(map[string]interface{})
 	if u.GetString("cardnum") != "" {
-		var users []models.User
-		o := orm.NewOrm()
-		num, err := o.QueryTable("user").Filter("card_num", u.GetString("cardnum")).All(&users)
-		result["num"] = num
-		result["result"] = users
-		result["err"] = err
-		u.Data["json"] = result
+		if num, err := o.QueryTable("user").Filter("card_num", u.GetString("cardnum")).All(&users);
+		err != nil {
+			result.SetValue("-1", 0, err)
+		}else {
+			result.SetValue("0", num, users)
+		}
+
+		u.Data["json"] = result.Get()
 		u.ServeJSON()
 	} else {
-		result["err"] = -1
-		u.Data["json"] = result
+		result.SetValue("-1", 0 , "用户卡号不正确")
+		// result["err"] = -1
+		u.Data["json"] = result.Get()
 		u.ServeJSON()
 	}
+
 }
 
 func (u *UserController) Add() {
