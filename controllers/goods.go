@@ -4,11 +4,36 @@ import (
 	"github.com/astaxie/beego"
 	"nepliteApi/models"
 	"github.com/astaxie/beego/orm"
-
+	"nepliteApi/comm"
+	"github.com/astaxie/beego/logs"
 )
 
 type GoodsController struct {
 	beego.Controller
+}
+
+func (goodsObj *GoodsController) UpdateYuzhi()  {
+	result := comm.Result{Ret: map[string]interface{}{"err": "", "num": 0, "result": ""}}
+	logs.Info("result : == ", result.Ret)
+
+	goods_id, _ := goodsObj.GetInt64("goods_id")
+	Yuzhi, _ := goodsObj.GetInt64("yuzhi")
+	o := orm.NewOrm()
+	var goods models.Goods
+	if err := o.QueryTable(models.Goods{}).Filter("id", goods_id).One(&goods); err != nil{
+		result.SetValue("-1", 0, err)
+	}else {
+		goods.Yuzhi = Yuzhi
+		logs.Warn("gods == %s", goods)
+		if num, er2 := o.Update(&goods); er2 != nil{
+			result.SetValue("-2", 0 , er2)
+		}else {
+			result.SetValue("0", num, "")
+		}
+	}
+	goodsObj.Data["json"] = result.Get()
+	goodsObj.ServeJSON()
+
 }
 
 func (goodsObj *GoodsController) Get()  {

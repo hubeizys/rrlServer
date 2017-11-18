@@ -77,6 +77,7 @@ func init() {
 		beego.NSRouter("/pandianadd", &controllers.PanDianController{}, "get:Add"),
 		beego.NSRouter("/all", &controllers.GoodsController{}),
 		beego.NSRouter("/show", &controllers.GoodsController{}, "get:ShowAll"),
+		beego.NSRouter("/updateyuzhi", &controllers.GoodsController{}, "get:UpdateYuzhi"),
 		beego.NSRouter("/add", &controllers.GoodsController{}, "get:Add"),
 		beego.NSNamespace("/record",
 			beego.NSRouter("/ruku", &controllers.GoodsRecordController{}, "get:Ruku"),
