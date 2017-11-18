@@ -56,7 +56,8 @@ type User struct {
 	Age      		int
 	Address  		string
 	Email    		string
-}
+	MasterID		int64
+	}
 
 /*
 func AddUser(u User) int {

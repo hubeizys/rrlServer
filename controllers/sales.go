@@ -14,8 +14,10 @@ type SalesController struct {
 func (sales * SalesController) Getall(){
 	result :=make(map[string]interface{})
 	var sssal []models.Sales
+
+	MasterID,_ := sales.GetInt64("MasterID")
 	o:=orm.NewOrm()
-	num, error := o.QueryTable("sales").All(&sssal)
+	num, error := o.QueryTable("sales").Filter("master_i_d", MasterID).All(&sssal)
 	result["err"]  =error
 	result["num"]  =num
 	result["result"] = sssal
@@ -68,11 +70,15 @@ func (sales * SalesController) Add(){
 	sale.Tiyan = sales.GetString("Tiyan")
 	sale.Ewai = sales.GetString("Ewai")
 	sale.TiJian = sales.GetString("TiJian")
+	var err error
+	sale.MasterID, err = sales.GetInt64("MasterID")
+	if err != nil{
+		result["err"] = "-1"
+		result["num"] = 0
+		result["result"] = err
+	}
 	o:=orm.NewOrm()
-	num, err := o.Insert(&sale)
-	result["err"]  = err
-	result["num"]  = num
-	result["result"] =  ""
+
 	if err == nil{
 		//  jianshao xianji
 		var user models.User
@@ -83,13 +89,19 @@ func (sales * SalesController) Add(){
 			var num  = user.Yueee - sale.JiaGE
 			if num < 0 {
 				result["err"]  = "钱不够"
+
 			}else{
 				user.Yueee = num
 				err_num, up_err := o.Update(&user)
 				result["err"]  = up_err
 				result["num"]  = err_num
+				if up_err != nil{
+					num, err := o.Insert(&sale)
+					result["err"]  = err
+					result["num"]  = num
+					result["result"] =  ""
+				}
 			}
-
 		}
 	}
 	sales.Data["json"] = result

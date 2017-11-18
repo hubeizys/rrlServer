@@ -49,7 +49,16 @@ func (u *UserController) UpdateUserBase() {
 	shengri := u.GetString("shengri")
 	shengao := u.GetString("shengao")
 	tizhong := u.GetString("tizhong")
-
+	var  err error
+	var MasterID int64
+	MasterID,err = u.GetInt64("MasterId")
+	if err != nil{
+		result["num"] = 0
+		result["result"] = err
+		result["err"] = -1
+		u.Data["json"] = result
+		u.ServeJSON()
+	}
 	o := orm.NewOrm()
 	//user := User{Id: 1}
 	var user models.User
@@ -65,6 +74,7 @@ func (u *UserController) UpdateUserBase() {
 		user.Gender = xingbie
 		user.Shengao = shengao
 		user.Tizhong = tizhong
+		user.MasterID = MasterID
 		timeLayout := "2006-01-02 15:04:05"
 		loc, _ := time.LoadLocation("Local")
 		theTime, eee := time.ParseInLocation(timeLayout, shengri, loc)
@@ -151,7 +161,15 @@ func (u *UserController) Add() {
 	user.CreateDate = theTime
 	user.Shengao = u.GetString("shengao")
 	user.Tizhong = u.GetString("tizhong")
-
+	var  err error
+	user.MasterID,err = u.GetInt64("MasterId")
+	if err != nil{
+		result["num"] = 0
+		result["result"] = err
+		result["err"] = -1
+		u.Data["json"] = result
+		u.ServeJSON()
+	}
 	num, err := o.Insert(&user)
 	result["num"] = num
 	result["result"] = num
@@ -163,9 +181,18 @@ func (u *UserController) Add() {
 // @router /info [get]
 func (u *UserController) Info() {
 	result := make(map[string]interface{})
+	master_id,err := u.GetInt64("master_id")
+	if err != nil{
+		result["num"] = 0
+		result["result"] = err
+		result["err"] = "-1"
+		u.Data["json"] = result
+		u.ServeJSON()
+	}
+
 	var users []models.User
 	o := orm.NewOrm()
-	num, err := o.QueryTable("user").All(&users)
+	num, err := o.QueryTable("user").Filter("master_i_d", master_id).All(&users)
 
 	logs.Warn("aasdasdasda")
 	result["num"] = num

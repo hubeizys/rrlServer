@@ -33,12 +33,10 @@ func init() {
 			beego.NSGet(":id", func(context *context.Context) {
 				context.Output.Body([]byte("notAllowed"))
 			}),
-
 		),
 		beego.NSNamespace("/shouhou",
 			beego.NSRouter("all", &controllers.UserSHController{}, "get:GetAll"),
 			beego.NSRouter("/add", &controllers.UserSHController{}, "get:Add"),
-
 		),
 
 		beego.NSNamespace("/sales",

@@ -17,7 +17,8 @@ type Sales struct {
 	Ewai       string
 	Tiyan      string
 	CreateDate time.Time          `orm:"auto_now_add;type(datetime);null" json:"create_date"`
-}
+	MasterID	int64
+	}
 
 func init() {
 	orm.RegisterModel(new(Sales))
