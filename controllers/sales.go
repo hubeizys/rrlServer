@@ -95,7 +95,7 @@ func (sales * SalesController) Add(){
 				err_num, up_err := o.Update(&user)
 				result["err"]  = up_err
 				result["num"]  = err_num
-				if up_err != nil{
+				if up_err == nil{
 					num, err := o.Insert(&sale)
 					result["err"]  = err
 					result["num"]  = num
