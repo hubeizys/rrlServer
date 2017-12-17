@@ -67,6 +67,9 @@ func init() {
 	comm_ns := beego.NewNamespace("/comm",
 		beego.NSRouter("/get", &controllers.SomeNewsController{}, "get:GetAll"),
 		beego.NSRouter("/add", &controllers.SomeNewsController{}, "post:Add"),
+		beego.NSRouter("/getcard", &controllers.CardsController{}, "get:Get"),
+		beego.NSRouter("/addcard", &controllers.CardsController{}, "get:AddCard"),
+
 	)
 
 	wuliao_ns := beego.NewNamespace("/wuliao",
